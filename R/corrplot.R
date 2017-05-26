@@ -863,8 +863,12 @@ corrplot <- function(corr,
       xlim <- c(m1 - 0.5, m2 + 0.5)
       ylim <- c(n1 - 0.5 - nn * cl.ratio, n1 - 0.5 - nn * 0.02)
     }
-
-    colorlegend(colbar = colbar, labels = round(labels, 2),
+    if (max(labels) > 10000) {
+        lglabels = sprintf("%.1E", labels)
+    } else {
+        lglabels = round(labels, 2)
+    }
+    colorlegend(colbar = colbar, labels = lglabels,
                 offset = cl.offset, ratio.colbar = 0.3, cex = cl.cex,
                 xlim = xlim, ylim = ylim, vertical = vertical,
                 align = cl.align.text)
