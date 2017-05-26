@@ -196,6 +196,8 @@
 #' @param \dots Additional arguments passing to function \code{text} for drawing
 #'   text lable.
 #'
+#' @param \sizes Additional matrix to decide the size of the circles/squares
+#'
 #' @return (Invisibly) returns a reordered correlation matrix.
 #'
 #' @details \code{corrplot} function offers flexible ways to visualize
@@ -262,7 +264,7 @@ corrplot <- function(corr,
   plotCI = c("n", "square", "circle", "rect"),
   lowCI.mat = NULL, uppCI.mat = NULL,
   na.label = "?", na.label.col = "black",
-  win.asp = 1, circles = NULL,
+  win.asp = 1, sizes = NULL,
   ...)
 {
 
@@ -388,7 +390,14 @@ corrplot <- function(corr,
   if (is.null(colnames(corr))) {
     colnames(corr) <- seq_len(m)
   }
-
+  
+  # normaliza sizes
+  if (!is.null(sizes)) {
+    sizes = sizes[match(rownames(sizes), rownames(corr)), match(colnames(sizes), colnames(corr))]
+    sizes = (sizes - min(sizes))/(max(sizes) - min(sizes))
+    sizes = as.vector(sizes)
+  }
+  
   # assigns Inf to cells in the matrix depending on the type paramter
   apply_mat_filter <- function(mat) {
     x <- matrix(1:n * m, n, m)
@@ -566,17 +575,16 @@ corrplot <- function(corr,
   ## background for the cells
   symbols(Pos, add = TRUE, inches = FALSE,
           rectangles = matrix(1, len.DAT, 2), bg = bg, fg = bg)
-  
-  if (is.null(circles)) {
-    cs = asp_rescale_factor * 0.9 * abs(DAT) ^ 0.5 / 2
+
+  ## circle  
+  if (is.null(sizes)) {
+    sizes = asp_rescale_factor * 0.9 * abs(DAT) ^ 0.5 / 2
   } else {
-    cs = circles[match(rownames(circles), rownames(corr)), match(colnames(circles), colnames(corr))]
-    cs = (cs-min(cs))/(max(cs)-min(cs))
+    sizes = sizes * 0.9 * abs(DAT) ^ 0.5 / 2
   }
-  ## circle
   if (method == "circle" && plotCI == "n") {
     symbols(Pos, add = TRUE,  inches = FALSE,
-            circles = cs,
+            circles = sizes,
             fg = col.border, bg = col.fill )
   }
 
@@ -694,9 +702,14 @@ corrplot <- function(corr,
   }
 
   ## square
+  if (is.null(sizes)) {
+    sizes = asp_rescale_factor * abs(DAT) ^ 0.5
+  } else {
+    sizes = sizes * abs(DAT) ^ 0.5
+  }
   if (method == "square" && plotCI == "n") {
     symbols(Pos, add = TRUE, inches = FALSE,
-            squares = asp_rescale_factor * abs(DAT) ^ 0.5,
+            squares = sizes,
             bg = col.fill, fg = col.border)
   }
 
