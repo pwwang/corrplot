@@ -571,7 +571,7 @@ corrplot <- function(corr,
     cs = asp_rescale_factor * 0.9 * abs(DAT) ^ 0.5 / 2
   } else {
     cs = circles[match(rownames(circles), rownames(corr)), match(colnames(circles), colnames(corr))]
-    cs = (cs-min(cs))/(max(c)-min(c))
+    cs = (cs-min(cs))/(max(cs)-min(cs))
   }
   ## circle
   if (method == "circle" && plotCI == "n") {
