@@ -393,7 +393,17 @@ corrplot <- function(corr,
   
   # normaliza sizes
   if (!is.null(sizes)) {
-    sizes = sizes[match(rownames(sizes), rownames(corr)), match(colnames(sizes), colnames(corr))]
+    corrrname = rownames(corr)
+    corrcname = colnames(corr)
+    sizername = rownames(sizes)
+    sizecname = colnames(sizes)
+    if (!is.null(corrrname) & !is.null(sizername) & !is.null(corrcname) & !is.null(sizecname)) {
+      sizes = sizes[match(rownames(sizes), rownames(corr)), match(colnames(sizes), colnames(corr))]
+    } else if (!is.null(corrrname) & !is.null(sizername)) {
+      sizes = sizes[match(rownames(sizes), rownames(corr)), ]
+    } else if (!is.null(corrcname) & !is.null(sizecname)) {
+      sizes = sizes[, match(colnames(sizes), colnames(corr))]
+    }
     sizes = (sizes - min(sizes))/(max(sizes) - min(sizes))
     sizes = as.vector(sizes)
   }
