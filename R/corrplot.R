@@ -262,7 +262,7 @@ corrplot <- function(corr,
   plotCI = c("n", "square", "circle", "rect"),
   lowCI.mat = NULL, uppCI.mat = NULL,
   na.label = "?", na.label.col = "black",
-  win.asp = 1,
+  win.asp = 1, circles = NULL,
   ...)
 {
 
@@ -566,11 +566,17 @@ corrplot <- function(corr,
   ## background for the cells
   symbols(Pos, add = TRUE, inches = FALSE,
           rectangles = matrix(1, len.DAT, 2), bg = bg, fg = bg)
-
+  
+  if (is.null(circles)) {
+    cs = asp_rescale_factor * 0.9 * abs(DAT) ^ 0.5 / 2
+  } else {
+    cs = circles[match(rownames(circles), rownames(corr)), match(colnames(circles), colnames(corr))]
+    cs = (cs-min(cs))/(max(c)-min(c))
+  }
   ## circle
   if (method == "circle" && plotCI == "n") {
     symbols(Pos, add = TRUE,  inches = FALSE,
-            circles = asp_rescale_factor * 0.9 * abs(DAT) ^ 0.5 / 2,
+            circles = cs,
             fg = col.border, bg = col.fill )
   }
 
